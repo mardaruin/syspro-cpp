@@ -1,7 +1,8 @@
-#include "main.cpp"
+#include "main.hpp"
+
 #include <gtest/gtest.h>
 
-bool almostEqual(const Point &p1, const Point &p2) {
+bool almostEqual(const Point& p1, const Point& p2) {
   static constexpr double EPSILON = numeric_limits<double>::epsilon() * 100;
   return abs(p1.x - p2.x) <= EPSILON && abs(p1.y - p2.y) <= EPSILON;
 }
@@ -53,7 +54,7 @@ TEST(LineTest, PerpendicularToVerticalLine) {
   EXPECT_EQ(perp.getC(), 0.0);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
