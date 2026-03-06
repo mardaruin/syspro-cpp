@@ -20,12 +20,26 @@ public:
   AVLtree():
       root(nullptr) {}
 
-  AVLtree(const AVLtree& other) { root = clone(other.root); }
+  AVLtree(const AVLtree& other) { root = clone(other.root); } // copy ctr
 
   AVLtree& operator=(const AVLtree& other) {
     if (&other != this) {
       clear();
       root = clone(other.root);
+    }
+    return *this;
+  }
+
+  AVLtree(AVLtree&& other) { // move ctr, arg is rvalue
+    root       = other.root;
+    other.root = nullptr;
+  }
+
+  AVLtree& operator=(AVLtree&& other) {
+    if (this != &other) {
+      clear();
+      root       = other.root;
+      other.root = nullptr;
     }
     return *this;
   }

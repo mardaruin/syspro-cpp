@@ -49,6 +49,41 @@ TEST(AVLTest, AssignmentOperator) {
   EXPECT_TRUE(original_tree.search(20));
 }
 
+TEST(AVLTest, MoveConstructor) {
+  AVLtree original_tree;
+  original_tree.insert(10);
+  original_tree.insert(20);
+  original_tree.insert(30);
+
+  AVLtree moved_tree(std::move(original_tree));
+
+  EXPECT_TRUE(moved_tree.search(10));
+  EXPECT_TRUE(moved_tree.search(20));
+  EXPECT_TRUE(moved_tree.search(30));
+
+  EXPECT_FALSE(original_tree.search(10));
+  EXPECT_FALSE(original_tree.search(20));
+  EXPECT_FALSE(original_tree.search(30));
+}
+
+TEST(AVLTest, MoveOperator) {
+  AVLtree original_tree;
+  original_tree.insert(10);
+  original_tree.insert(20);
+  original_tree.insert(30);
+
+  AVLtree moved_tree;
+  moved_tree = std::move(original_tree);
+
+  EXPECT_TRUE(moved_tree.search(10));
+  EXPECT_TRUE(moved_tree.search(20));
+  EXPECT_TRUE(moved_tree.search(30));
+
+  EXPECT_FALSE(original_tree.search(10));
+  EXPECT_FALSE(original_tree.search(20));
+  EXPECT_FALSE(original_tree.search(30));
+}
+
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
