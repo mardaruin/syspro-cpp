@@ -33,12 +33,8 @@ public:
     return *this;
   }
 
-  T& get() {
-    return *pointer;
-  }
-
-  const T& get() const {
-    return *pointer;
+  T* operator->() {
+    return pointer;
   }
 
   ~ScopedPointerDeepCopy() {
@@ -72,12 +68,8 @@ public:
     return *this;
   }
 
-  T& get() {
-    return *pointer;
-  }
-
-  const T& get() const {
-    return *pointer;
+  T* operator->() {
+    return pointer;
   }
 
   ~ScopedPointerTransferring() {
