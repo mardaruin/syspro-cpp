@@ -3,26 +3,27 @@
 #include <iostream>
 using namespace std;
 
-struct AVLnode {
-  int key;
-  int height;
-  AVLnode* left_child;
-  AVLnode* right_child;
-
-  AVLnode(int k):
-      key(k), height(1), left_child(nullptr), right_child(nullptr) {}
-};
-
+template<typename Key>
 class AVLtree {
 public:
+  struct AVLnode {
+    Key key;
+    int height;
+    AVLnode* left_child;
+    AVLnode* right_child;
+
+    explicit AVLnode(const Key& k):
+        key(k), height(1), left_child(nullptr), right_child(nullptr) {}
+  };
+
   AVLnode* root;
 
   AVLtree():
       root(nullptr) {}
 
-  AVLtree(const AVLtree& other) { root = clone(other.root); } // copy ctr
+  AVLtree(const AVLtree<Key>& other) { root = clone(other.root); } // copy ctr
 
-  AVLtree& operator=(const AVLtree& other) {
+  AVLtree& operator=(const AVLtree<Key>& other) {
     if (&other != this) {
       clear();
       root = clone(other.root);
@@ -30,7 +31,7 @@ public:
     return *this;
   }
 
-  AVLtree(AVLtree&& other) { // move ctr, arg is rvalue
+  AVLtree(AVLtree<Key>&& other) { // move ctr, arg is rvalue
     root       = other.root;
     other.root = nullptr;
   }
@@ -46,9 +47,9 @@ public:
 
   ~AVLtree() { clear(root); }
 
-  void insert(int value) { root = insertHelper(root, value); }
+  void insert(const Key& value) { root = insertHelper(root, value); }
 
-  bool search(int value) {
+  bool search(const Key& value) {
     AVLnode* curr = root;
     while (curr != nullptr) {
       if (value == curr->key)
@@ -61,7 +62,7 @@ public:
     return false;
   }
 
-  void remove(int value) { root = deleteHelper(root, value); }
+  void remove(const Key& value) { root = deleteHelper(root, value); }
 
 private:
   int height(AVLnode* node) {
@@ -147,7 +148,7 @@ private:
     return node;
   }
 
-  AVLnode* insertHelper(AVLnode* node, int value) {
+  AVLnode* insertHelper(AVLnode* node, const Key& value) {
     if (!node)
       return new AVLnode(value);
 
@@ -167,7 +168,7 @@ private:
     return node;
   }
 
-  AVLnode* deleteHelper(AVLnode* node, int value) {
+  AVLnode* deleteHelper(AVLnode* node, const Key& value) {
     if (!node) {
       return node;
     }

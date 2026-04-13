@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 TEST(AVLTest, InsertAndSearch) {
-  AVLtree tree;
+  AVLtree<int> tree;
   tree.insert(10);
   tree.insert(20);
   tree.insert(30);
@@ -12,7 +12,7 @@ TEST(AVLTest, InsertAndSearch) {
 }
 
 TEST(AVLTest, InsertAndRemove) {
-  AVLtree tree;
+  AVLtree<int> tree;
   tree.insert(10);
   tree.insert(20);
   EXPECT_TRUE(tree.search(10));
@@ -21,12 +21,12 @@ TEST(AVLTest, InsertAndRemove) {
 }
 
 TEST(AVLTest, CopyConstructor) {
-  AVLtree original_tree;
+  AVLtree<int> original_tree;
   original_tree.insert(10);
   original_tree.insert(20);
   original_tree.insert(30);
 
-  AVLtree copied_tree(original_tree);
+  AVLtree<int> copied_tree(original_tree);
 
   EXPECT_TRUE(copied_tree.search(10));
   EXPECT_TRUE(copied_tree.search(20));
@@ -37,8 +37,8 @@ TEST(AVLTest, CopyConstructor) {
 }
 
 TEST(AVLTest, AssignmentOperator) {
-  AVLtree original_tree;
-  AVLtree copied_tree;
+  AVLtree<int> original_tree;
+  AVLtree<int> copied_tree;
   copied_tree.insert(10);
   copied_tree.insert(20);
   copied_tree.insert(30);
@@ -50,12 +50,12 @@ TEST(AVLTest, AssignmentOperator) {
 }
 
 TEST(AVLTest, MoveConstructor) {
-  AVLtree original_tree;
+  AVLtree<int> original_tree;
   original_tree.insert(10);
   original_tree.insert(20);
   original_tree.insert(30);
 
-  AVLtree moved_tree(std::move(original_tree));
+  AVLtree<int> moved_tree(std::move(original_tree));
 
   EXPECT_TRUE(moved_tree.search(10));
   EXPECT_TRUE(moved_tree.search(20));
@@ -67,12 +67,12 @@ TEST(AVLTest, MoveConstructor) {
 }
 
 TEST(AVLTest, MoveOperator) {
-  AVLtree original_tree;
+  AVLtree<int> original_tree;
   original_tree.insert(10);
   original_tree.insert(20);
   original_tree.insert(30);
 
-  AVLtree moved_tree;
+  AVLtree<int> moved_tree;
   moved_tree = std::move(original_tree);
 
   EXPECT_TRUE(moved_tree.search(10));
