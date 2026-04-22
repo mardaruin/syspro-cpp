@@ -84,6 +84,56 @@ TEST(AVLTest, MoveOperator) {
   EXPECT_FALSE(original_tree.search(30));
 }
 
+TEST(AVLTreeIteratorTest, EmptyTree) {
+  AVLtree<int> tree;
+
+  EXPECT_EQ(tree.begin(), tree.end());
+
+  int cnt = 0;
+  for (const auto& node : tree) {
+    cnt++;
+  }
+  EXPECT_EQ(cnt, 0);
+}
+
+TEST(AVLTreeIteratorTest, SingleElement) {
+  AVLtree<int> tree;
+  tree.insert(26);
+  EXPECT_NE(tree.begin(), tree.end());
+  EXPECT_EQ(*tree.begin(), 26);
+  tree.remove(26);
+  EXPECT_EQ(tree.begin(), tree.end());
+}
+
+TEST(AVLTreeIteratorTest, MulpipleElements) {
+  AVLtree<int> tree;
+  tree.insert(20);
+  tree.insert(26);
+  tree.insert(6);
+  EXPECT_NE(tree.begin(), tree.end());
+  EXPECT_EQ(*tree.begin(), 6);
+  AVLtree<int>::Iterator it(tree.begin());
+  ++it;
+  EXPECT_EQ(*it, 20);
+  it++;
+  EXPECT_EQ(*it, 26);
+  it++;
+  EXPECT_EQ(it, tree.end());
+}
+
+TEST(AVLTreeIteratorTest, CompareIterators) {
+  AVLtree<int> tree;
+  tree.insert(20);
+  tree.insert(26);
+  tree.insert(6);
+
+  AVLtree<int>::Iterator it1(tree.begin());
+  AVLtree<int>::Iterator it2(tree.begin());
+  EXPECT_TRUE(it1 == it2);
+  ++it1;
+  EXPECT_TRUE(it1 != it2);
+}
+
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <stack>
 using namespace std;
 
 template<typename Key>
@@ -16,7 +17,77 @@ public:
         key(k), height(1), left_child(nullptr), right_child(nullptr) {}
   };
 
+  class Iterator {
+  private:
+    AVLnode* curr;
+    std::stack<AVLnode*> node_stack;
+
+  public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type        = Key;
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = const Key*;
+    using reference         = const Key&;
+
+    explicit Iterator(AVLnode* node):
+        curr(node) {
+      while (curr) {
+        node_stack.push(curr);
+        curr = curr->left_child;
+      }
+      if (!node_stack.empty()) {
+        curr = node_stack.top();
+        node_stack.pop();
+      } else {
+        curr = nullptr;
+      }
+    }
+
+    reference operator*() const {
+      return curr->key;
+    }
+
+    Iterator& operator++() {
+      if (curr->right_child) {
+        curr = curr->right_child;
+        while (curr) {
+          node_stack.push(curr);
+          curr = curr->left_child;
+        }
+      }
+      if (!node_stack.empty()) {
+        curr = node_stack.top();
+        node_stack.pop();
+      } else {
+        curr = nullptr;
+      }
+      return *this;
+    }
+
+    Iterator operator++(int mock) {
+      Iterator temp = *this;
+      ++(*this);
+      return temp;
+    }
+
+    bool operator!=(const Iterator& other) const {
+      return curr != other.curr;
+    }
+
+    bool operator==(const Iterator& other) const {
+      return curr == other.curr;
+    }
+  };
+
   AVLnode* root;
+
+  Iterator begin() {
+    return Iterator(root);
+  }
+
+  Iterator end() {
+    return Iterator(nullptr);
+  }
 
   AVLtree():
       root(nullptr) {}
