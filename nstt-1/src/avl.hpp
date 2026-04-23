@@ -23,12 +23,6 @@ public:
     std::stack<AVLnode*> node_stack;
 
   public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type        = Key;
-    using difference_type   = std::ptrdiff_t;
-    using pointer           = const Key*;
-    using reference         = const Key&;
-
     explicit Iterator(AVLnode* node):
         curr(node) {
       while (curr) {
@@ -43,7 +37,7 @@ public:
       }
     }
 
-    reference operator*() const {
+    const Key& operator*() const {
       return curr->key;
     }
 
