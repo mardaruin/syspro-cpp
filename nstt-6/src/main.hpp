@@ -5,19 +5,19 @@
 
 class SquareMatrix {
 private:
-  int size;
+  size_t size;
   double* data;
 
   void copyHelper(const SquareMatrix& other) {
     size = other.getSize();
     data = new double[size * size];
-    for (int i = 0; i < size * size; i++) {
+    for (size_t i = 0; i < size * size; i++) {
       data[i] = other.data[i];
     }
   }
 
   void setZeros() {
-    for (int i = 0; i < size * size; i++) {
+    for (size_t i = 0; i < size * size; i++) {
       data[i] = 0.0;
     }
   }
@@ -29,21 +29,15 @@ private:
   }
 
 public:
-  explicit SquareMatrix(int n):
+  explicit SquareMatrix(size_t n):
       size(n), data(new double[n * n]) {
-    if (size <= 0) {
-      throw std::invalid_argument("Matrix size must be > 0.");
-    }
     setZeros();
   }
 
   explicit SquareMatrix(const std::vector<double>& vect):
       size(vect.size()), data(new double[size * size]) {
-    if (size <= 0) {
-      throw std::invalid_argument("Matrix size msut be > 0.");
-    }
     setZeros();
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
       (*this)[i][i] = vect[i];
     }
   }
@@ -52,11 +46,22 @@ public:
     copyHelper(other);
   }
 
-  SquareMatrix& operator=(const SquareMatrix& other) {
-    if (this != &other) {
-      free();
-      copyHelper(other);
-    }
+  void swap(SquareMatrix& first, SquareMatrix& second) {
+    using std::swap;
+    swap(first.size, second.size);
+    swap(first.data, second.data);
+  }
+
+  // SquareMatrix& operator=(const SquareMatrix& other) {
+  //   if (this != &other) {
+  //     free();
+  //     copyHelper(other);
+  //   }
+  //   return *this;
+  // }
+
+  SquareMatrix& operator=(SquareMatrix other) {
+    swap(*this, other);
     return *this;
   }
 
@@ -66,26 +71,26 @@ public:
     other.data = nullptr;
   }
 
-  SquareMatrix& operator=(SquareMatrix&& other) {
-    if (this != &other) {
-      free();
-      size       = other.getSize();
-      data       = other.data;
-      other.data = nullptr;
-      other.size = 0;
-    }
-    return *this;
-  }
+  // SquareMatrix& operator=(SquareMatrix&& other) {
+  //   if (this != &other) {
+  //     free();
+  //     size       = other.getSize();
+  //     data       = other.data;
+  //     other.data = nullptr;
+  //     other.size = 0;
+  //   }
+  //   return *this;
+  // }
 
   explicit operator double() const {
     double sum = 0;
-    for (int i = 0; i < size * size; i++) {
+    for (size_t i = 0; i < size * size; i++) {
       sum += data[i];
     }
     return sum;
   }
 
-  int getSize() const {
+  size_t getSize() const {
     return size;
   }
 
@@ -95,38 +100,35 @@ public:
 
   class Row {
   private:
-    int size;
+    size_t size;
     double* rowStart;
 
   public:
-    Row(int n, double* ptr):
+    Row(size_t n, double* ptr):
         size(n),
         rowStart(ptr) {}
 
-    double& operator[](int i) {
-      if (i < 0 || i >= size) {
-        throw std::out_of_range("Index must be less than matrix size.");
-      }
+    double& operator[](size_t i) {
       return rowStart[i];
     }
 
-    const double& operator[](int i) const {
-      if (i < 0 || i >= size) {
+    const double& operator[](size_t i) const {
+      if (i >= size) {
         throw std::out_of_range("Index must be less than matrix size.");
       }
       return rowStart[i];
     }
   };
 
-  Row operator[](int i) {
-    if (i < 0 || i >= size) {
+  Row operator[](size_t i) {
+    if (i >= size) {
       throw std::out_of_range("Index must be less than matrix size.");
     }
     return Row(size, data + i * size);
   }
 
-  const Row operator[](int i) const {
-    if (i < 0 || i >= size) {
+  const Row operator[](size_t i) const {
+    if (i >= size) {
       throw std::out_of_range("Index must be less than matrix size.");
     }
     return Row(size, data + i * size);
@@ -137,8 +139,8 @@ public:
       throw std::invalid_argument("Matrix sizes in addition must be equal.");
     }
     SquareMatrix result(size);
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         result[i][j] = (*this)[i][j] + other[i][j];
       }
     }
@@ -149,8 +151,8 @@ public:
     if (size != other.getSize()) {
       throw std::invalid_argument("Matrix sizes in addition must be equal.");
     }
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         (*this)[i][j] += other[i][j];
       }
     }
@@ -162,10 +164,10 @@ public:
       throw std::invalid_argument("Square Matrix sizes in multiplication must be equal.");
     }
     SquareMatrix result(size);
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         double sum = 0;
-        for (int k = 0; k < size; k++) {
+        for (size_t k = 0; k < size; k++) {
           sum += (*this)[i][k] * other[k][j];
         }
         result[i][j] = sum;
@@ -184,8 +186,8 @@ public:
 
   SquareMatrix operator*(double scalar) const {
     SquareMatrix result(size);
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         result[i][j] = (*this)[i][j] * scalar;
       }
     }
@@ -193,8 +195,8 @@ public:
   }
 
   SquareMatrix& operator*=(double scalar) {
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         (*this)[i][j] *= scalar;
       }
     }
@@ -205,8 +207,8 @@ public:
     if (size != other.getSize()) {
       return false;
     }
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
         if ((*this)[i][j] != other[i][j]) {
           return false;
         }
